@@ -28,21 +28,25 @@ def center_window(self, w, h):  # pass in the tkinter frame (master) reference a
 
 #
 def folderCheck(self):
-    count = None
     path_A = self.folderPath_A.get()
     path_B = self.folderPath_B.get()
     # check if folders are populated
     if path_A != '' and path_B != '':
-        self.lbl_info.config(
-            text='Next Check: {}'.format(self.nextTime.time()))
+        today = datetime.today()
+        yesterday = datetime.replace(today, day=today.day-1)
+        targetDate = 'Target Date: {}/{}/{}'.format(yesterday.day, yesterday.month, yesterday.year)
+        targetDate += ' {}:{}:{}'.format(yesterday.hour, yesterday.minute, yesterday.second)
+        self.lbl_info.config(text=targetDate)
         # Get files from folder A
         filesInDir = os.listdir(path_A)
         count = 0
         for file in filesInDir:
-            count += 1
-            # move the file
-            shutil.move(
-                '{}/{}'.format(path_A, file), path_B)
+            mTime = datetime.fromtimestamp(os.stat(path_A+'\\'+file).st_mtime) 
+            print(mTime)
+            if mTime <= yesterday:
+                # move the file
+                shutil.move('{}/{}'.format(path_A, file), path_B)
+                count += 1
 
         self.lbl_display.config(text='Files moved: {}'.format(count))
     else:

@@ -40,21 +40,7 @@ class Application(Frame):
         # Function Starts
         #################################
         project_gui.load_gui(self)
-
-    #This doesn't work for some reason...
-    def startCheck(self):
-        # get curent time
-        self.curTime = datetime.today()
-        # set next time
-        self.nextTime = self.curTime.replace(second=self.curTime.second+5)
-        # Get delta time
-        delta_t = self.nextTime-self.curTime
-        # prep interval
-        secs = delta_t.seconds+1
-        #
-        self.ti = Timer(secs, project_func.folderCheck(self))
-        # start the timer
-        self.ti.start()
+        
 
 
 if __name__ == '__main__':

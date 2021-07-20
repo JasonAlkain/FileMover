@@ -60,14 +60,6 @@ def load_gui(self):
     self.btn_folderB_select["command"] = lambda: project_func.openFolder_B(
         self)
     self.btn_folderB_select["bg"] = '#65FF80'
-    # Start Button Setup
-    self.btn_start = Button(self.master)
-    self.btn_start["text"] = 'Start Check'
-    self.btn_start["width"] = 12
-    self.btn_start["height"] = 2
-    self.btn_start["bg"] = '#050F10'
-    # This does not work...
-    #self.btn_start["command"] = lambda: self.startCheck()
     # Submit Button Setup
     self.btn_submit = Button(self.master)
     self.btn_submit["text"] = 'Manual Check'
@@ -106,8 +98,6 @@ def load_gui(self):
     # buttom buttons
     self.btn_submit.grid(
         row=7, column=0, padx=(20, 0), pady=(20, 0), sticky=N+W)
-    self.btn_start.grid(
-        row=7, column=1, padx=(20, 0), pady=(20, 0), sticky=N+W)
     self.btn_close.grid(
         row=7, column=2, padx=(20, 0), pady=(20, 0), sticky=N+E)
 
