@@ -7,6 +7,7 @@ from tkinter import filedialog
 import webbrowser
 import shutil
 from datetime import datetime
+from threading import Timer
 
 #
 import project_gui
@@ -26,49 +27,58 @@ def center_window(self, w, h):  # pass in the tkinter frame (master) reference a
 
 
 #
-def submit(self):
-    today = datetime.today()
-    tomorow = today.replace(day=today.day+1)
-    self.lbl_info.config(text='Next Check: {}'.format(tomorow))
+def folderCheck(self):
     count = None
-    # Get files from folder A
-    filesInDir = os.listdir(self.folderPath_A)
-    if filesInDir != '':
+    path_A = self.folderPath_A.get()
+    path_B = self.folderPath_B.get()
+    # check if folders are populated
+    if path_A != '' and path_B != '':
+        self.lbl_info.config(
+            text='Next Check: {}'.format(self.nextTime.time()))
+        # Get files from folder A
+        filesInDir = os.listdir(path_A)
         count = 0
         for file in filesInDir:
             count += 1
-            if self.manualCheck == True:
-                if self.messagebox.askokcancel("Move File", 'Okay to move file "{}"?'.format(file)):
-                    # move the file
-                    shutil.move(
-                        '{}/{}'.format(self.folderPath_A, file), self.folderPath_B)
-            else:
-                shutil.move('{}/{}'.format(self.folderPath_A, file),
-                            self.folderPath_B)
-    updateNotify(self, 'Files moved: {}'.format(count))
+            # move the file
+            shutil.move(
+                '{}/{}'.format(path_A, file), path_B)
+
+        self.lbl_display.config(text='Files moved: {}'.format(count))
+    else:
+        self.lbl_display.config(text='Folder A or B have not been selected')
 
 
 #
 def openFolder_A(self):
-    self.folder_A = filedialog.askdirectory()
-    print(self.folder_A)
-    self.lbl_folder_A.config(text='{}'.format(self.folder_A))
-
-    pass
+    path = filedialog.askdirectory()
+    self.folderPath_A.set(value=path)
+    if path != '':
+        # get drive
+        driveLetter = os.path.splitdrive(path)[0]
+        # grab the last folder in the path
+        folder = os.path.basename(path)
+        self.lbl_fp_A.config(text='{}\\..\\{}'.format(driveLetter, folder))
+        print(path)
+    else:
+        self.lbl_fp_A.config(text='!!Please Select a folder!!')
 
 
 #
 def openFolder_B(self):
-    self.folder_B = filedialog.askdirectory()
-    print(self.folder_B)
-    self.lbl_folder_B.config(text='{}'.format(self.folder_B))
-    pass
-
-
-#
-def updateNotify(self, text=''):
-    self.lbl_display.config(text='{}'.format(text))
-    # self.lbl_display.config(text='')
+    path = filedialog.askdirectory()
+    self.folderPath_B.set(value=path)
+    if path != '':
+        # get drive
+        driveLetter = os.path.splitdrive(path)[0]
+        # grab the last folder in the path
+        folder = os.path.basename(path)
+        # update label
+        self.lbl_fp_B.config(text='{}\\..\\{}'.format(driveLetter, folder))
+        print(path)
+    else:
+        # if nothing was selectde let the user know
+        self.lbl_fp_B.config(text='!!Please Select a folder!!')
 
 
 #
@@ -84,6 +94,7 @@ def ask_quit(self):
         os._exit(0)
 
 
+#
 def openFile(fileName=''):
     data = ''
     if fileName != '':
@@ -91,27 +102,6 @@ def openFile(fileName=''):
             data = f.read()
             f.close()
     return data
-
-
-def body_html(self):
-    _h1s = '\n\t\t<h1>{}</h1>'.format(self.header_html.get())
-    _ps = '\n\t\t<p>{}</p>'.format(self.paragraph_html.get())
-    section = '<div>{}{}\n\t</div>'.format(_h1s, _ps)
-    return section
-
-
-# Returns a template html document with the inner html
-def htmlSetup(self):
-    docType = '<!DOCTYPE html>'
-    metaTags = ['<meta charset="UTF-8">', '<meta http-equiv="X-UA-Compatible" content="IE=edge">',
-                '<meta name="viewport" content="width=device-width, initial-scale=1.0">']
-    titleTag = '<title>PWPG</title>'
-    headTag = '<head>\n\t{}\n\t{}\n\t{}\n\t{}\n</head>'.format(
-        metaTags[0], metaTags[1], metaTags[2], titleTag)
-    bodyTag = '<body style="text-align: center; padding: 0 20;">\n\t{}\n</body>'.format(
-        body_html(self))
-    htmlTag = '<html lang="en">\n{}\n{}\n</html>'.format(headTag, bodyTag)
-    return '{}\n{}'.format(docType, htmlTag)
 
 
 if __name__ == "__main__":

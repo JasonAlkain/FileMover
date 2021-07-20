@@ -1,8 +1,8 @@
+from threading import Timer
 import tkinter as tk
 from tkinter import *
 from tkinter import messagebox
 from datetime import datetime
-from threading import Timer
 
 import project_gui
 import project_func
@@ -21,7 +21,7 @@ class Application(Frame):
         self.master.title('File Mover!')
 
         self.master.resizable(width=False, height=False)
-        self.master.geometry('{}x{}'.format(490, 280))
+        self.master.geometry('{}x{}'.format(490, 380))
         self.master.config(bg='#303030')
         self.messagebox = messagebox
         self.master.protocol("WM_DELETE_WINDOW",
@@ -30,24 +30,31 @@ class Application(Frame):
         #################################
         # String Variable Setup
         #################################
-        self.folderPath_A = 'E:\\Schools\\The Tech Academy\\the-tech-academy-repos\\FileMover\\Folder_A'
-        self.folderPath_B = 'E:\\Schools\\The Tech Academy\\the-tech-academy-repos\\FileMover\\Folder_B'
+        self.folderPath_A = StringVar()
+        self.folderPath_B = StringVar()
         self.nextCheck = ''
+
+        self.folderPath_A.set(value='')
+        self.folderPath_B.set(value='')
         #################################
         # Function Starts
         #################################
         project_gui.load_gui(self)
-        self.startCheck()
 
+    #This doesn't work for some reason...
     def startCheck(self):
-        project_func.submit(self)
-        today = datetime.today()
-        tomorow = today.replace(day=today.day+1)
-        delta_t = tomorow-today
+        # get curent time
+        self.curTime = datetime.today()
+        # set next time
+        self.nextTime = self.curTime.replace(second=self.curTime.second+5)
+        # Get delta time
+        delta_t = self.nextTime-self.curTime
+        # prep interval
         secs = delta_t.seconds+1
-
-        t = Timer(secs, project_func.submit(self))
-        t.start()
+        #
+        self.ti = Timer(secs, project_func.folderCheck(self))
+        # start the timer
+        self.ti.start()
 
 
 if __name__ == '__main__':
